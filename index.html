@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Planeringskalender</title>
   
-  <!-- PWA Inställningar -->
+  <!-- PWA Settings -->
   <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -13,7 +13,7 @@
 
   <style>
     :root {
-      --bg-color: #121214;
+      --bg-color: #0b0f17;
       --card-bg: #1c1c1e;
       --header-bg: #2c2c2e;
       --accent-blue: #0a84ff;
@@ -30,7 +30,7 @@
     body {
       margin: 0;
       padding: 0;
-      background-color: var(--bg-color);
+      background: linear-gradient(180deg, #050b14 0%, #0e1117 100%);
       color: var(--text-main);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       display: flex;
@@ -39,20 +39,20 @@
       overflow: hidden;
     }
 
-    /* Top Navigation Bar */
+    /* Top Toolbar */
     .toolbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 16px;
+      padding: 10px 16px;
       padding-top: max(12px, env(safe-area-inset-top));
-      background-color: rgba(28, 28, 30, 0.8);
+      background-color: rgba(28, 28, 30, 0.85);
       backdrop-filter: blur(20px);
       border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
     }
 
     .app-title {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 800;
       letter-spacing: 2px;
       text-transform: uppercase;
@@ -64,11 +64,9 @@
       background: none;
       border: none;
       color: var(--accent-blue);
-      font-size: 24px;
+      font-size: 26px;
       cursor: pointer;
-      padding: 0;
-      display: flex;
-      align-items: center;
+      line-height: 1;
     }
 
     /* Segmented Picker */
@@ -93,7 +91,6 @@
       font-weight: 500;
       border-radius: 7px;
       cursor: pointer;
-      transition: all 0.2s;
     }
 
     .segment-btn.active {
@@ -107,7 +104,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 8px 16px;
-      background-color: rgba(44, 44, 46, 0.8);
+      background-color: rgba(44, 44, 46, 0.85);
       font-size: 15px;
       font-weight: 600;
     }
@@ -120,7 +117,7 @@
       cursor: pointer;
     }
 
-    /* Main Grid List */
+    /* Grid Container */
     .calendar-container {
       flex: 1;
       overflow-y: auto;
@@ -129,48 +126,49 @@
 
     .day-row {
       display: flex;
-      height: 44px;
+      height: 38px;
       border-bottom: 0.5px solid rgba(255, 255, 255, 0.08);
     }
 
     .day-info {
-      width: 75px;
-      min-width: 75px;
+      width: 84px;
+      min-width: 84px;
       display: flex;
       align-items: center;
-      padding-left: 8px;
+      padding-left: 6px;
       gap: 4px;
       font-size: 13px;
-      border-right: 0.5px solid rgba(255, 255, 255, 0.1);
+      border-right: 0.5px solid rgba(255, 255, 255, 0.12);
       background-color: rgba(0, 0, 0, 0.2);
     }
 
     .day-info.weekend {
-      background-color: rgba(255, 255, 255, 0.05);
+      background-color: rgba(255, 255, 255, 0.06);
     }
 
     .day-num {
       font-weight: 700;
       font-family: monospace;
-      width: 18px;
+      width: 20px;
+      text-align: right;
     }
 
     .day-name {
       font-size: 10px;
       color: var(--text-sub);
-      width: 18px;
+      width: 20px;
     }
 
     .week-tag {
-      font-size: 8px;
+      font-size: 9px;
       font-weight: 700;
       color: var(--accent-blue);
-      background-color: rgba(10, 132, 255, 0.2);
-      padding: 1px 3px;
+      background-color: rgba(10, 132, 255, 0.18);
+      padding: 1px 4px;
       border-radius: 3px;
     }
 
-    /* Tracks */
+    /* Tracks Grid */
     .tracks-container {
       display: flex;
       flex: 1;
@@ -179,7 +177,7 @@
     .track-cell {
       flex: 1;
       border-right: 0.5px solid rgba(255, 255, 255, 0.08);
-      padding: 2px;
+      padding: 0;
       position: relative;
     }
 
@@ -187,42 +185,59 @@
       border-right: none;
     }
 
+    /* Seamless Event Block Styles */
     .event-block {
       width: 100%;
       height: 100%;
-      border-radius: 4px;
-      padding: 2px 4px;
+      padding: 2px 6px;
       font-size: 10px;
       display: flex;
       flex-direction: column;
       justify-content: center;
+      align-items: flex-start;
       overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      box-sizing: border-border-box;
+      box-sizing: border-box;
+      cursor: pointer;
+    }
+
+    .event-block.single { border-radius: 4px; }
+    .event-block.start { border-radius: 4px 4px 0 0; }
+    .event-block.middle { border-radius: 0; }
+    .event-block.end { border-radius: 0 0 4px 4px; }
+
+    .event-block.low-priority {
+      opacity: 0.6;
+      background-image: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(255,255,255,0.2) 4px, rgba(255,255,255,0.2) 8px);
     }
 
     .event-block.note {
       border: 1px dashed rgba(255, 255, 255, 0.4);
-      background-color: rgba(128, 128, 128, 0.25) !important;
+      background-color: rgba(128, 128, 128, 0.3) !important;
     }
 
     .event-title {
       font-weight: 700;
-      line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
     }
 
     .event-sub {
-      font-size: 8px;
+      font-size: 8.5px;
       opacity: 0.85;
-      line-height: 1;
+      white-space: pre-wrap;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
-    /* Modal / Form Sheet */
+    /* Modal Sheet */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background-color: rgba(0, 0, 0, 0.6);
+      background-color: rgba(0, 0, 0, 0.7);
       display: none;
       justify-content: center;
       align-items: flex-end;
@@ -236,6 +251,8 @@
       border-radius: 16px 16px 0 0;
       padding: 20px;
       box-shadow: 0 -5px 25px rgba(0,0,0,0.5);
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
     .modal-header {
@@ -247,22 +264,19 @@
 
     .modal-title { font-weight: 700; font-size: 17px; }
 
-    .form-group {
-      margin-bottom: 12px;
-    }
-
+    .form-group { margin-bottom: 14px; }
     .form-group label {
       display: block;
       font-size: 11px;
       color: var(--text-sub);
-      margin-bottom: 4px;
+      margin-bottom: 6px;
       text-transform: uppercase;
     }
 
     .form-control {
       width: 100%;
       background-color: rgba(255, 255, 255, 0.08);
-      border: 0.5px solid rgba(255, 255, 255, 0.1);
+      border: 0.5px solid rgba(255, 255, 255, 0.12);
       border-radius: 8px;
       padding: 10px;
       color: white;
@@ -274,6 +288,7 @@
       gap: 10px;
       overflow-x: auto;
       padding: 4px 0;
+      align-items: center;
     }
 
     .color-opt {
@@ -285,9 +300,7 @@
       border: 2px solid transparent;
     }
 
-    .color-opt.selected {
-      border-color: white;
-    }
+    .color-opt.selected { border-color: white; }
 
     .btn-row {
       display: flex;
@@ -307,23 +320,25 @@
 
     .btn-primary { background-color: var(--accent-blue); color: white; }
     .btn-cancel { background-color: rgba(255, 255, 255, 0.1); color: white; }
+    .btn-danger { background-color: rgba(255, 69, 58, 0.2); color: #ff453a; margin-top: 10px; width: 100%; }
+    .btn-dup { background-color: rgba(255, 255, 255, 0.15); color: white; margin-top: 10px; width: 100%; }
   </style>
 </head>
 <body>
 
-  <!-- Top Toolbar -->
+  <!-- Top Bar -->
   <div class="toolbar">
-    <div style="width: 24px;"></div>
+    <div style="width: 26px;"></div>
     <div class="app-title">Planeringskalender</div>
-    <button class="add-btn" onclick="openModal()">⊕</button>
+    <button class="add-btn" onclick="openModalForAdd()">⊕</button>
   </div>
 
-  <!-- View Picker -->
+  <!-- Span Picker -->
   <div class="picker-container">
     <div class="segmented-control">
-      <button class="segment-btn" onclick="setSpan('week')">Vecka</button>
-      <button class="segment-btn active" onclick="setSpan('month')">Månad</button>
-      <button class="segment-btn" onclick="setSpan('3month')">3 Månader</button>
+      <button class="segment-btn" onclick="setSpan('week', this)">Vecka</button>
+      <button class="segment-btn active" onclick="setSpan('month', this)">Månad</button>
+      <button class="segment-btn" onclick="setSpan('3month', this)">3 Månader</button>
     </div>
   </div>
 
@@ -334,7 +349,7 @@
     <button class="nav-arrow" onclick="navigatePeriod(1)">▶</button>
   </div>
 
-  <!-- Grid Rows -->
+  <!-- Calendar Grid -->
   <div class="calendar-container" id="calendarGrid"></div>
 
   <!-- Add/Edit Modal -->
@@ -351,13 +366,21 @@
       </div>
 
       <div class="form-group">
-        <label>Info / Underrad</label>
-        <textarea id="eventInfoInput" class="form-control" rows="2" placeholder="Repetitioner, flygtider m.m."></textarea>
+        <label>Info / Underrad (Retur för fler rader)</label>
+        <textarea id="eventInfoInput" class="form-control" rows="3" placeholder="Repetitioner, flygtider m.m."></textarea>
       </div>
 
       <div class="form-group">
-        <label>Färg & Typ</label>
+        <label>Typ & Färg</label>
         <div class="color-picker-row" id="colorPickerRow"></div>
+      </div>
+
+      <div class="form-group">
+        <label>Startdatum & Slutdatum</label>
+        <div style="display:flex; gap:8px;">
+          <input type="date" id="startDateInput" class="form-control">
+          <input type="date" id="endDateInput" class="form-control">
+        </div>
       </div>
 
       <div class="form-group">
@@ -369,19 +392,29 @@
         </select>
       </div>
 
+      <div class="form-group" style="display:flex; align-items:center; justify-content:space-between;">
+        <label style="margin:0;">Låg prioritet</label>
+        <input type="checkbox" id="lowPriorityInput" style="transform: scale(1.3);">
+      </div>
+
       <div class="btn-row">
         <button class="btn btn-cancel" onclick="closeModal()">Avbryt</button>
         <button class="btn btn-primary" onclick="saveEvent()">Spara</button>
+      </div>
+
+      <div id="editExtraBtns" style="display:none;">
+        <button class="btn btn-dup" onclick="duplicateCurrentEvent()">Duplicera Projekt</button>
+        <button class="btn btn-danger" onclick="deleteCurrentEvent()">Ta bort Projekt</button>
       </div>
     </div>
   </div>
 
   <script>
-    // State
-    let currentDate = new Date(2026, 8, 1); // Sept 2026
+    let currentDate = new Date(2026, 8, 1);
     let currentSpan = 'month';
     let selectedColor = '#f4364c';
     let isNoteMode = false;
+    let editingEventId = null;
 
     const PRESET_COLORS = [
       { name: 'Röd', hex: '#f4364c' },
@@ -389,15 +422,15 @@
       { name: 'Gul', hex: '#fbbc04' },
       { name: 'Blå', hex: '#4285f4' },
       { name: 'Lila', hex: '#ab47bc' },
-      { name: 'Orange', hex: '#ff9500' }
+      { name: 'Orange', hex: '#ff9500' },
+      { name: 'Rosa', hex: '#ff2d55' }
     ];
 
     let events = [
-      { id: '1', title: 'Chicago', info: 'Rep 10-18', color: '#fbbc04', start: '2026-09-10', end: '2026-09-17', track: 0, isNote: false },
-      { id: '2', title: 'Flyg SK1420', info: 'Avgång 08:45', color: 'gray', start: '2026-09-12', end: '2026-09-12', track: 2, isNote: true }
+      { id: '1', title: 'Chicago', info: 'Rep 10-18', color: '#fbbc04', start: '2026-09-10', end: '2026-09-17', track: 0, isLowPriority: false, isNote: false },
+      { id: '2', title: 'Flyg SK1420', info: 'Avgång 08:45 Arlanda', color: 'gray', start: '2026-09-12', end: '2026-09-12', track: 2, isLowPriority: false, isNote: true }
     ];
 
-    // Initialize
     function init() {
       renderColorPicker();
       renderCalendar();
@@ -406,10 +439,10 @@
       }
     }
 
-    function setSpan(span) {
+    function setSpan(span, btn) {
       currentSpan = span;
-      document.querySelectorAll('.segment-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
+      document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
       renderCalendar();
     }
 
@@ -458,16 +491,20 @@
           
           rowHTML += `<div class="track-cell">`;
           if (ev) {
-            if (ev.start === dateStr) {
-              rowHTML += `
-                <div class="event-block ${ev.isNote ? 'note' : ''}" style="background-color: ${ev.color};">
-                  <div class="event-title">${ev.title}</div>
-                  ${ev.info ? `<div class="event-sub">${ev.info}</div>` : ''}
-                </div>
-              `;
-            } else {
-              rowHTML += `<div class="event-block ${ev.isNote ? 'note' : ''}" style="background-color: ${ev.color}; opacity:0.8;"></div>`;
-            }
+            let posClass = 'middle';
+            if (ev.start === dateStr && ev.end === dateStr) posClass = 'single';
+            else if (ev.start === dateStr) posClass = 'start';
+            else if (ev.end === dateStr) posClass = 'end';
+
+            rowHTML += `
+              <div class="event-block ${posClass} ${ev.isLowPriority ? 'low-priority' : ''} ${ev.isNote ? 'note' : ''}" 
+                   style="background-color: ${ev.isNote ? 'transparent' : ev.color};"
+                   onclick="openModalForEdit('${ev.id}')">
+                ${(posClass === 'start' || posClass === 'single') ? `
+                  <div class="event-title">${ev.title}</div>${ev.info ? `<div class="event-sub">${ev.info}</div>` : ''}
+                ` : ''}
+              </div>
+            `;
           }
           rowHTML += `</div>`;
         }
@@ -484,16 +521,18 @@
       return Math.ceil((((d - yearStart) / 86400000) + 1)/7);
     }
 
-    // Modal logic
     function renderColorPicker() {
       const row = document.getElementById('colorPickerRow');
-      row.innerHTML = `<div class="color-opt" style="border:1px dashed white; background:#333;" onclick="selectColor('note')"></div>`;
+      row.innerHTML = `<button type="button" style="background:#333; border:1px dashed white; color:white; font-size:10px; padding:6px; border-radius:6px;" onclick="selectColor('note', this)">Ingen färg / Note</button>`;
       PRESET_COLORS.forEach(c => {
-        row.innerHTML += `<div class="color-opt" style="background:${c.hex};" onclick="selectColor('${c.hex}')"></div>`;
+        row.innerHTML += `<div class="color-opt" style="background:${c.hex};" onclick="selectColor('${c.hex}', this)"></div>`;
       });
     }
 
-    function selectColor(hex) {
+    function selectColor(hex, el) {
+      document.querySelectorAll('.color-opt').forEach(c => c.classList.remove('selected'));
+      if (el && el.classList) el.classList.add('selected');
+
       if (hex === 'note') {
         isNoteMode = true;
         selectedColor = 'gray';
@@ -503,7 +542,37 @@
       }
     }
 
-    function openModal() {
+    function openModalForAdd() {
+      editingEventId = null;
+      document.getElementById('modalTitle').innerText = 'Nytt Projekt';
+      document.getElementById('eventTitleInput').value = '';
+      document.getElementById('eventInfoInput').value = '';
+      document.getElementById('lowPriorityInput').checked = false;
+      document.getElementById('editExtraBtns').style.display = 'none';
+
+      const defaultDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-10`;
+      document.getElementById('startDateInput').value = defaultDate;
+      document.getElementById('endDateInput').value = defaultDate;
+
+      document.getElementById('eventModal').style.display = 'flex';
+    }
+
+    function openModalForEdit(id) {
+      const ev = events.find(e => e.id === id);
+      if (!ev) return;
+
+      editingEventId = id;
+      document.getElementById('modalTitle').innerText = ev.isNote ? 'Redigera Note' : 'Redigera Projekt';
+      document.getElementById('eventTitleInput').value = ev.title;
+      document.getElementById('eventInfoInput').value = ev.info;
+      document.getElementById('startDateInput').value = ev.start;
+      document.getElementById('endDateInput').value = ev.end;
+      document.getElementById('trackSelect').value = ev.track;
+      document.getElementById('lowPriorityInput').checked = ev.isLowPriority;
+      
+      selectColor(ev.isNote ? 'note' : ev.color);
+      document.getElementById('editExtraBtns').style.display = 'block';
+
       document.getElementById('eventModal').style.display = 'flex';
     }
 
@@ -514,23 +583,48 @@
     function saveEvent() {
       const title = document.getElementById('eventTitleInput').value;
       const info = document.getElementById('eventInfoInput').value;
+      const start = document.getElementById('startDateInput').value;
+      const end = document.getElementById('endDateInput').value;
       const track = parseInt(document.getElementById('trackSelect').value);
+      const isLowPriority = document.getElementById('lowPriorityInput').checked;
 
-      if (!title) return;
+      if (!title || !start || !end) return;
 
-      const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-15`;
+      if (editingEventId) {
+        const index = events.findIndex(e => e.id === editingEventId);
+        if (index !== -1) {
+          events[index] = { id: editingEventId, title, info, start, end, track, color: selectedColor, isLowPriority, isNote: isNoteMode };
+        }
+      } else {
+        events.push({
+          id: Date.now().toString(),
+          title, info, start, end, track,
+          color: selectedColor,
+          isLowPriority,
+          isNote: isNoteMode
+        });
+      }
 
-      events.push({
-        id: Date.now().toString(),
-        title: title,
-        info: info,
-        color: selectedColor,
-        start: dateStr,
-        end: dateStr,
-        track: track,
-        isNote: isNoteMode
-      });
+      closeModal();
+      renderCalendar();
+    }
 
+    function duplicateCurrentEvent() {
+      if (!editingEventId) return;
+      const ev = events.find(e => e.id === editingEventId);
+      if (ev) {
+        events.push({
+          ...ev,
+          id: Date.now().toString()
+        });
+      }
+      closeModal();
+      renderCalendar();
+    }
+
+    function deleteCurrentEvent() {
+      if (!editingEventId) return;
+      events = events.filter(e => e.id !== editingEventId);
       closeModal();
       renderCalendar();
     }
